@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartão Interativo - Vendas de Salgados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            margin: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff;
+        }
+        .card-inner {
+            width: 100%;
+            position: relative;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .card-front, .card-back {
+            width: 100%;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #333333;
+            text-align: center;
+        }
+        .card-front {
+            background-color: #28a745;
+            color: #ffffff;
+        }
+        .card-front h2 {
+            margin-top: 20px;
+            font-size: 24px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .card-front p {
+            margin-bottom: auto;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+        .card-front img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .card-back h3 {
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: #28a745;
+        }
+        .selection-options {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .selection-options label {
+            font-size: 16px;
+            display: block;
+            margin-bottom: 5px;
+            color: #333333;
+            width: 100%;
+        }
+        .selection-options .quantity-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            justify-content: space-between;
+        }
+        .selection-options .quantity-input input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            font-size: 16px;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            color: #333333;
+            margin: 0 10px;
+        }
+        .selection-options .quantity-input button {
+            padding: 5px 10px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .selection-options .quantity-input button:hover {
+            transform: scale(1.1);
+        }
+        .progress-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .progress-container span {
+            font-size: 24px;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+            height: 20px;
+        }
+        .progress {
+            height: 100%;
+            background-color: #28a745;
+            text-align: right;
+            line-height: 20px;
+            padding-right: 5px;
+            color: white;
+            transition: width 0.3s;
+        }
+        .address-input, .name-input, .payment-method, .schedule-input {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        .address-input input, .name-input input, .payment-method select, .schedule-input input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            color: #333333;
+        }
+        .min-order-info, .total-info, .delivery-info {
+            font-size: 14px;
+            color: #333333;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .delivery-info i {
+            margin-right: 8px;
+            color: #28a745;
+        }
+        .send-whatsapp {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+        .send-whatsapp:hover {
+            background-color: #218838;
+        }
+        .social-buttons {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 15px;
+        }
+        .social-buttons a {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            flex: 1;
+            margin: 0 10px;
+            text-align: center;
+        }
+        .whatsapp {
+            background-color: #25D366;
+        }
+        .instagram {
+            background-color: #C13584;
+        }
+        .social-buttons a i {
+            margin-right: 10px;
+        }
+        .social-buttons a:hover {
+            opacity: 0.8;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .modal-content p {
+            margin: 15px 0;
+            color: #333333;
+            line-height: 1.5;
+        }
+        .modal-content .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .modal-content .close:hover,
+        .modal-content .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .loading-container {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .loading-animation {
+            width: 50px;
+            height: 50px;
+            border: 6px solid #28a745;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        .loading-text {
+            font-size: 16px;
+            color: #333333;
+            margin-top: 10px;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .rating-container {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .rating-stars input[type="radio"] {
+            display: none;
+        }
+        .rating-stars label {
+            font-size: 30px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .rating-stars input[type="radio"]:checked ~ label {
+            color: #ffdd57;
+        }
+        .rating-stars label:hover,
+        .rating-stars label:hover ~ label {
+            color: #ffdd57;
+        }
+        @media (max-width: 480px) {
+            .card {
+                max-width: 100%;
+                margin: 10px;
+            }
+            .card-inner {
+                padding: 15px;
+            }
+            .card-front h2, .card-back h3 {
+                font-size: 20px;
+            }
+            .selection-options label,
+            .address-input label {
+                font-size: 14px;
+            }
+            .total-info, .min-order-info, .delivery-info {
+                font-size: 14px;
+                padding: 8px;
+            }
+            .send-whatsapp {
+                font-size: 16px;
+                padding: 8px;
+            }
+            .social-buttons a {
+                font-size: 18px;
+                padding: 8px;
+                margin: 0 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="card-inner">
+        <div class="card-front">
+            <img src="https://raw.githubusercontent.com/wssalgados/Card-pio-WSsalgados/main/Design%20sem%20nome%20(5).png" alt="Logo WS Salgados" class="logo">
+            <h2>WS Salgados</h2>
+            <p>Promoções imperdíveis!</p>
+        </div>
+        <div class="card-back">
+            <h3>Escolha seu Combo</h3>
+            <div class="selection-options">
+                <div class="quantity-input">
+                    <label for="quibe">Quibe:</label>
+                    <button onclick="decreaseValue('quibe')">-</button>
+                    <input type="number" id="quibe" value="0" min="0">
+                    <button onclick="increaseValue('quibe')">+</button>
+                </div>
+                <div class="quantity-input">
+                    <label for="coxinha">Coxinha de Frango:</label>
+                    <button onclick="decreaseValue('coxinha')">-</button>
+                    <input type="number" id="coxinha" value="0" min="0">
+                    <button onclick="increaseValue('coxinha')">+</button>
+                </div>
+                <div class="quantity-input">
+                    <label for="travesseirinho">Travesseirinho de Carne:</label>
+                    <button onclick="decreaseValue('travesseirinho')">-</button>
+                    <input type="number" id="travesseirinho" value="0" min="0">
+                    <button onclick="increaseValue('travesseirinho')">+</button>
+                </div>
+                <div class="quantity-input">
+                    <label for="enroladinho">Enroladinho de Salsicha:</label>
+                    <button onclick="decreaseValue('enroladinho')">-</button>
+                    <input type="number" id="enroladinho" value="0" min="0">
+                    <button onclick="increaseValue('enroladinho')">+</button>
+                </div>
+                <div class="quantity-input">
+                    <label for="bolinha">Bolinha de Queijo:</label>
+                    <button onclick="decreaseValue('bolinha')">-</button>
+                    <input type="number" id="bolinha" value="0" min="0">
+                    <button onclick="increaseValue('bolinha')">+</button>
+                </div>
+            </div>
+            <div class="progress-container">
+                <span id="progress-emoji">😞</span>
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+            </div>
+            <div class="address-input">
+                <label for="address">Seu Endereço:</label>
+                <input type="text" id="address" placeholder="Rua, Número, Bairro">
+            </div>
+            <div class="name-input">
+                <label for="user-name">Seu Nome:</label>
+                <input type="text" id="user-name" placeholder="Digite seu nome">
+            </div>
+            <div class="schedule-input">
+                <label for="schedule">Data e Hora de Entrega:</label>
+                <input type="datetime-local" id="schedule">
+            </div>
+            <div class="payment-method">
+                <label for="payment">Forma de Pagamento:</label>
+                <select id="payment">
+                    <option value="Cartão de Crédito">Cartão de Crédito</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="PIX">PIX</option>
+                </select>
+            </div>
+            <div class="min-order-info">
+                Lembrando que a nossa quantidade mínima é de 50 salgados.
+            </div>
+            <div class="total-info" id="total-info">
+                Total: R$ 0,00
+            </div>
+            <div class="delivery-info">
+                <i class="fas fa-map-marker-alt"></i> Primavera do Leste<br>
+                <i class="fas fa-motorcycle"></i> Delivery Grátis para pedidos acima de 50 salgados dentro da cidade.
+            </div>
+            <button class="send-whatsapp" onclick="simulateSending()">Enviar Pedido pelo WhatsApp</button>
+            <div class="loading-container" id="loading-container">
+                <div class="loading-animation"></div>
+                <div class="loading-text">Enviando Pedido...</div>
+            </div>
+            <div class="social-buttons">
+                <a href="https://wa.me/5566999982019" target="_blank" class="whatsapp"><i class="fab fa-whatsapp"></i>WhatsApp</a>
+                <a href="https://www.instagram.com/ws_salgadosoficial" target="_blank" class="instagram"><i class="fab fa-instagram"></i>Instagram</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p id="order-summary"></p>
+        <a href="https://wa.me/5566999982019?text=" id="confirm-link" class="send-whatsapp"><i class="fab fa-whatsapp"></i> Confirme seu pedido no <strong>WhatsApp</strong>!</a>
+    </div>
+</div>
+<div class="rating-container" id="rating-container">
+    <p>Avalie nossa qualidade:</p>
+    <div class="rating-stars">
+        <input type="radio" name="rating" id="star1"><label for="star1">★</label>
+        <input type="radio" name="rating" id="star2"><label for="star2">★</label>
+        <input type="radio" name="rating" id="star3"><label for="star3">★</label>
+        <input type="radio" name="rating" id="star4"><label for="star4">★</label>
+        <input type="radio" name="rating" id="star5"><label for="star5">★</label>
+    </div>
+</div>
+<script>
+    function increaseValue(id) {
+        const input = document.getElementById(id);
+        input.value = parseInt(input.value) + 1;
+        calculateTotal();
+    }
+    function decreaseValue(id) {
+        const input = document.getElementById(id);
+        if (parseInt(input.value) > 0) {
+            input.value = parseInt(input.value) - 1;
+        }
+        calculateTotal();
+    }
+    function calculateTotal() {
+        const pricePerUnit = 0.85;
+        const quibe = parseInt(document.getElementById('quibe').value) || 0;
+        const coxinha = parseInt(document.getElementById('coxinha').value) || 0;
+        const travesseirinho = parseInt(document.getElementById('travesseirinho').value) || 0;
+        const enroladinho = parseInt(document.getElementById('enroladinho').value) || 0;
+        const bolinha = parseInt(document.getElementById('bolinha').value) || 0;
+        let totalSalgados = quibe + coxinha + travesseirinho + enroladinho + bolinha;
+        let totalPrice = (totalSalgados * pricePerUnit).toFixed(2);
+
+        // Atualizando a barra de progresso e emojis
+        const progressBar = document.getElementById('progress-bar');
+        const progressEmoji = document.getElementById('progress-emoji');
+        let progressPercentage = (totalSalgados / 50) * 100;
+        progressPercentage = progressPercentage > 100 ? 100 : progressPercentage;
+        progressBar.style.width = progressPercentage + '%';
+
+        if (totalSalgados < 50) {
+            progressEmoji.textContent = '😞';
+            progressBar.style.backgroundColor = '#dc3545'; // Vermelho para abaixo de 50 salgados
+        } else {
+            progressEmoji.textContent = '😃';
+            progressBar.style.backgroundColor = '#28a745'; // Verde para 50 ou mais salgados
+        }
+
+        document.getElementById('total-info').textContent = `Total: R$ ${totalPrice}`;
+        return { totalSalgados, totalPrice, quibe, coxinha, travesseirinho, enroladinho, bolinha };
+    }
+    function formatDateTime(dateTime) {
+        const date = new Date(dateTime);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+    }
+    function simulateSending() {
+        const { totalSalgados, totalPrice, quibe, coxinha, travesseirinho, enroladinho, bolinha } = calculateTotal();
+        const address = document.getElementById('address').value;
+        const name = document.getElementById('user-name').value;
+        const payment = document.getElementById('payment').value;
+        const schedule = document.getElementById('schedule').value;
+
+        if (totalSalgados < 50) {
+            alert("A quantidade mínima é de 50 salgados. Por favor, ajuste a quantidade.");
+            return;
+        }
+        if (!address) {
+            alert("Por favor, insira o seu endereço.");
+            return;
+        }
+        if (!schedule) {
+            alert("Por favor, insira a data e hora de entrega.");
+            return;
+        }
+        if (!name) {
+            alert("Por favor, insira o seu nome.");
+            return;
+        }
+
+        const formattedSchedule = formatDateTime(schedule);
+
+        let messageHtml = `Olá, gostaria de fazer um pedido:<br>`;
+        if (quibe > 0) messageHtml += `<span style="color: #007bff;">Quibe:</span> ${quibe} unidades<br>`;
+        if (coxinha > 0) messageHtml += `<span style="color: #dc3545;">Coxinha de Frango:</span> ${coxinha} unidades<br>`;
+        if (travesseirinho > 0) messageHtml += `<span style="color: #28a745;">Travesseirinho de Carne:</span> ${travesseirinho} unidades<br>`;
+        if (enroladinho > 0) messageHtml += `<span style="color: #ffc107;">Enroladinho de Salsicha:</span> ${enroladinho} unidades<br>`;
+        if (bolinha > 0) messageHtml += `<span style="color: #17a2b8;">Bolinha de Queijo:</span> ${bolinha} unidades<br>`;
+        messageHtml += `<br><span style="color: #6c757d;">Endereço:</span> ${address}<br>`;
+        messageHtml += `<span style="color: #6c757d;">Nome:</span> ${name}<br>`;
+        messageHtml += `<span style="color: #6c757d;">Data e Hora de Entrega:</span> ${formattedSchedule}<br>`;
+        messageHtml += `<span style="color: #6c757d;">Forma de Pagamento:</span> ${payment}<br>`;
+        messageHtml += `<br><span style="color: #6c757d;">Total:</span> ${totalSalgados} salgados<br>`;
+        messageHtml += `<span style="color: #28a745;">Valor Total:</span> R$ ${totalPrice}`;
+
+        let messageText = `Olá, gostaria de fazer um pedido:\n`;
+        if (quibe > 0) messageText += `Quibe: ${quibe} unidades\n`;
+        if (coxinha > 0) messageText += `Coxinha de Frango: ${coxinha} unidades\n`;
+        if (travesseirinho > 0) messageText += `Travesseirinho de Carne: ${travesseirinho} unidades\n`;
+        if (enroladinho > 0) messageText += `Enroladinho de Salsicha: ${enroladinho} unidades\n`;
+        if (bolinha > 0) messageText += `Bolinha de Queijo: ${bolinha} unidades\n`;
+        messageText += `\nEndereço: ${address}\nNome: ${name}\nData e Hora de Entrega: ${formattedSchedule}\nForma de Pagamento: ${payment}\n\nTotal: ${totalSalgados} salgados\nValor Total: R$ ${totalPrice}`;
+
+        document.getElementById('order-summary').innerHTML = messageHtml;
+        document.getElementById('confirm-link').href = `https://wa.me/5566999982019?text=${encodeURIComponent(messageText)}`;
+
+        document.getElementById('loading-container').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('loading-container').style.display = 'none';
+            showModal();
+        }, 3000);
+    }
+
+    function showModal() {
+        document.getElementById('myModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('myModal').style.display = 'none';
+        showRating();
+    }
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', calculateTotal);
+    });
+</script>
+</body>
+</html>
